@@ -2,7 +2,7 @@
 
 # Kafka
 
-> All-multi purpose Discord bot & Honkai: Star Rail related from Interstellaris Indonesia.
+> All-multi purpose Discord bot & Honkai: Star Rail related from Honkai: Star Rail Indonesia.
 
 ## ー Information
 
