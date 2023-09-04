@@ -3,7 +3,7 @@ import { ApplyOptions } from "@sapphire/decorators";
 import { PrismaClient } from "@prisma/client";
 import { Message, InteractionResponse, SlashCommandBuilder, GuildMember, Guild } from "discord.js";
 
-import { EmbedBuilder } from "../../lib";
+import { EmbedBuilder, Emojis } from "../../lib";
 
 @ApplyOptions<Command.Options>({
     name: "rank",
@@ -24,14 +24,26 @@ export class RankCommand extends Command {
     }
 
     public async messageRun(message: Message): Promise<Message> {
-        return (await this.response(message)) as Message;
+        return (await this.response(message, message.member)) as Message;
     }
 
     public async chatInputRun(interaction: Command.ChatInputCommandInteraction): Promise<InteractionResponse> {
-        return (await this.response(interaction)) as InteractionResponse;
+        const guild = this.container.client.guilds.cache.get("1068139995103244289");
+        const member: GuildMember = guild.members.cache.get(interaction.user.id);
+
+        return (await this.response(interaction, member)) as InteractionResponse;
     }
 
-    private async response(ctx: Message | Command.ChatInputCommandInteraction): Promise<Message | InteractionResponse> {
+    private async response(ctx: Message | Command.ChatInputCommandInteraction, member: GuildMember): Promise<Message | InteractionResponse> {
+        if (!member.roles.cache.has("1068139995103244289"))
+        return await ctx.reply({
+            embeds: [
+                new EmbedBuilder()
+                    .setDescription(`${Emojis.redcross}・Hanya staff yang boleh menjalankan perintah ini!`)
+                    .isErrorEmbed(),
+            ],
+        });
+
         if (ctx.guild.id !== "1068139995103244289") return;
 
         const members: Data[] = await this.getMembers();
