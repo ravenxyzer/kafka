@@ -55,16 +55,16 @@ export class RankCommand extends Command {
 
         let description: string = "";
         sortedMembers.forEach((player, index) => {
-            description += `**#${index + 1}・${player.member.user.username}**\n⭐ Activity: ${player.activityPoint.toLocaleString(
+            description += `**#${index + 1}・${player.member.user.username}**\n⭐: ${player.activityPoint.toLocaleString(
                 "us"
-            )} points ・ 📝 Attend Sum: ${player.attendSum}x (${player.attendPerMonth}/month)\n\n`;
+            )} points, 📝: ${player.attendSum}x (${player.attendPerMonth}/month)\n\n`;
         });
 
         return await ctx.reply({
             embeds: [
                 new EmbedBuilder()
                     .setThumbnail(ctx.guild.iconURL({ size: 4096 }))
-                    .setDescription(`## 🏆 ・ Activity Rank\n${line}\n\n${description}`)
+                    .setDescription(`## 🏆 ・ Activity Rank\n${line}\n\n${description}\n\nNote: ⭐: Activity Points & 📝: Attendance`)
                     .setFooter({
                         text: "Tingkatkan terus keaktifanmu!",
                         iconURL: this.container.client.user.displayAvatarURL({ size: 1024 }),
@@ -87,9 +87,9 @@ export class RankCommand extends Command {
 
             container.push({
                 member,
-                activityPoint: dbStaff.activityPoint ?? 0,
-                attendSum: dbUser.attendSum ?? 0,
-                attendPerMonth: dbUser.attendPerMonth ?? 0,
+                activityPoint: !dbStaff ? 0 : dbStaff.activityPoint,
+                attendSum: !dbUser ? 0 : dbUser.attendSum,
+                attendPerMonth: !dbUser ? 0 : dbUser.attendPerMonth,
             });
         }
 
