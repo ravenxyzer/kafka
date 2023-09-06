@@ -55,16 +55,18 @@ export class RankCommand extends Command {
 
         let description: string = "";
         sortedMembers.forEach((player, index) => {
-            description += `**#${index + 1}・${player.member.user.username}**\n⭐: ${player.activityPoint.toLocaleString(
+            description += `**#${index + 1}・${player.member.user.username}**\n\`⭐\` : ${player.activityPoint.toLocaleString(
                 "us"
-            )} points, 📝: ${player.attendSum}x (${player.attendPerMonth}/month)\n\n`;
+            )} points\n\`📝\` : ${player.attendSum} kali (${player.attendPerMonth}x/bulan)\n\n`;
         });
 
         return await ctx.reply({
             embeds: [
                 new EmbedBuilder()
                     .setThumbnail(ctx.guild.iconURL({ size: 4096 }))
-                    .setDescription(`## 🏆 ・ Activity Rank\n${line}\n\n${description}\n\nNote: ⭐: Activity Points & 📝: Attendance`)
+                    .setDescription(
+                        `## 🏆 ・ Activity Rank\n${line}\n\n${description}\n\nNote: \`⭐\` : Activity Points ・ \`📝\` : Attendance`
+                    )
                     .setFooter({
                         text: "Tingkatkan terus keaktifanmu!",
                         iconURL: this.container.client.user.displayAvatarURL({ size: 1024 }),
@@ -113,3 +115,5 @@ interface Data {
     attendSum: number;
     attendPerMonth: number;
 }
+
+type Headers = ["Name", "Activity Points", "Attendance", "Attendance (per month)"];
