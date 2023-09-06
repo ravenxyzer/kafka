@@ -6,8 +6,8 @@ import { Message, User } from "discord.js";
 import { EmbedBuilder, Emojis } from "../../lib";
 
 @ApplyOptions<Command.Options>({
-    name: "addpoint",
-    description: "Add activity point to a user.",
+    name: "subpoint",
+    description: "Substract activity point to a user.",
     requiredClientPermissions: ["SendMessages"],
     requiredUserPermissions: ["SendMessages"],
     preconditions: ["AdminOnly"],
@@ -29,7 +29,7 @@ export class AddPointCommand extends Command {
         return message.reply({
             embeds: [
                 new EmbedBuilder()
-                    .setDescription(`${Emojis.checkmark}・Berhasil menambahkan ${point.toLocaleString("us")} point ke <@${user.id}>`)
+                    .setDescription(`${Emojis.checkmark}・Berhasil mengurangi ${point.toLocaleString("us")} point <@${user.id}>`)
                     .isSuccessEmbed(),
             ],
         });

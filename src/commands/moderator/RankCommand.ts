@@ -34,34 +34,37 @@ export class RankCommand extends Command {
         return (await this.response(interaction, member)) as InteractionResponse;
     }
 
-    private async response(ctx: Message | Command.ChatInputCommandInteraction, member: GuildMember): Promise<Message | InteractionResponse> {
+    private async response(
+        ctx: Message | Command.ChatInputCommandInteraction,
+        member: GuildMember
+    ): Promise<Message | InteractionResponse> {
         if (!member.roles.cache.has("1068139995103244289"))
-        return await ctx.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setDescription(`${Emojis.redcross}・Hanya staff yang boleh menjalankan perintah ini!`)
-                    .isErrorEmbed(),
-            ],
-        });
+            return await ctx.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setDescription(`${Emojis.redcross}・Hanya staff yang boleh menjalankan perintah ini!`)
+                        .isErrorEmbed(),
+                ],
+            });
 
         if (ctx.guild.id !== "1068139995103244289") return;
 
         const members: Data[] = await this.getMembers();
         const sortedMembers: Data[] = this.sortedMembers(members);
-        const line = "๑‧˚꒷꒦︶₊꒷꒦︶₊꒷꒦˚‧๑‧˚꒷꒦︶₊꒷꒦︶₊꒷꒦˚‧๑‧˚꒷꒦︶₊꒷꒦︶₊꒷꒦˚‧๑˖";
+        const line = "๑‧˚꒷꒦︶₊꒷꒦︶₊꒷꒦˚‧๑‧˚꒷꒦︶₊꒷꒦︶₊꒷꒦˚‧๑˖";
 
         let description: string = "";
         sortedMembers.forEach((player, index) => {
-            description += `**#${index + 1}・${player.member.user.username}**\nPoin Keaktifkan: ${player.activityPoint.toLocaleString(
+            description += `**#${index + 1}・${player.member.user.username}**\n⭐ Activity: ${player.activityPoint.toLocaleString(
                 "us"
-            )} poin.\n\n`;
+            )} points ・ 📝 Attend Sum: ${player.attendSum}x (${player.attendPerMonth}/month)\n\n`;
         });
 
         return await ctx.reply({
             embeds: [
                 new EmbedBuilder()
                     .setThumbnail(ctx.guild.iconURL({ size: 4096 }))
-                    .setDescription(`## 🏆 ・ Toplist By Activity Point\n${line}\n\n${description}`)
+                    .setDescription(`## 🏆 ・ Activity Rank\n${line}\n\n${description}`)
                     .setFooter({
                         text: "Tingkatkan terus keaktifanmu!",
                         iconURL: this.container.client.user.displayAvatarURL({ size: 1024 }),
@@ -79,13 +82,15 @@ export class RankCommand extends Command {
         });
 
         for (const member of members) {
-            const db = await this.prisma.staff.findFirst({ where: { userId: member.id } });
+            const dbStaff = await this.prisma.staff.findFirst({ where: { userId: member.id } });
+            const dbUser = await this.prisma.user.findFirst({ where: { userId: member.id } });
 
-            if (db) {
-                container.push({ member, activityPoint: db.activityPoint });
-            } else {
-                container.push({ member, activityPoint: 0 });
-            }
+            container.push({
+                member,
+                activityPoint: dbStaff.activityPoint ?? 0,
+                attendSum: dbUser.attendSum ?? 0,
+                attendPerMonth: dbUser.attendPerMonth ?? 0,
+            });
         }
 
         return container;
@@ -105,4 +110,6 @@ export class RankCommand extends Command {
 interface Data {
     member: GuildMember;
     activityPoint: number;
+    attendSum: number;
+    attendPerMonth: number;
 }
