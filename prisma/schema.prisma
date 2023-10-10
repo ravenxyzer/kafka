@@ -48,7 +48,8 @@ model Staff {
   userId  String
   guildId String
 
-  activityPoint Int? @default(0)
+  activityPoint Int?      @default(0)
+  lastMessage   DateTime? @default(now())
 
   @@unique([userId])
 }

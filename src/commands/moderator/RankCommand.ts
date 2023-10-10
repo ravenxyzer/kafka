@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import { Message, InteractionResponse, SlashCommandBuilder, GuildMember, Guild } from "discord.js";
 
 import { EmbedBuilder, Emojis } from "../../lib";
+import dayjs from "dayjs";
 
 @ApplyOptions<Command.Options>({
     name: "rank",
@@ -86,12 +87,13 @@ export class RankCommand extends Command {
         for (const member of members) {
             const dbStaff = await this.prisma.staff.findFirst({ where: { userId: member.id } });
             const dbUser = await this.prisma.user.findFirst({ where: { userId: member.id } });
+            const isNextMonth = dayjs(dbUser.lastAttend).isBefore(1, "month");
 
             container.push({
                 member,
                 activityPoint: !dbStaff ? 0 : dbStaff.activityPoint,
                 attendSum: !dbUser ? 0 : dbUser.attendSum,
-                attendPerMonth: !dbUser ? 0 : dbUser.attendPerMonth,
+                attendPerMonth: !dbUser || isNextMonth ? 0 : dbUser.attendPerMonth,
             });
         }
 
