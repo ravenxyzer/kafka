@@ -87,13 +87,13 @@ export class RankCommand extends Command {
         for (const member of members) {
             const dbStaff = await this.prisma.staff.findFirst({ where: { userId: member.id } });
             const dbUser = await this.prisma.user.findFirst({ where: { userId: member.id } });
-            const isNextMonth = dayjs(dbUser.lastAttend).isBefore(1, "month");
+            const isLasttMonth = dayjs(dbUser.lastAttend).isBefore(1, "month");
 
             container.push({
                 member,
                 activityPoint: !dbStaff ? 0 : dbStaff.activityPoint,
                 attendSum: !dbUser ? 0 : dbUser.attendSum,
-                attendPerMonth: !dbUser || isNextMonth ? 0 : dbUser.attendPerMonth,
+                attendPerMonth: !dbUser ? 0 : isLasttMonth ? 0 : dbUser.attendPerMonth,
             });
         }
 
