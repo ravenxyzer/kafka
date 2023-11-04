@@ -1,10 +1,7 @@
 import { Listener, Events } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { Time } from "@sapphire/time-utilities";
-import { Client } from "discord.js";
 import { PrismaClient } from "@prisma/client";
-
-import { Presences } from "../../lib";
+import { ActivityType } from "discord.js";
 
 @ApplyOptions<Listener.Options>({
     name: "ready",
@@ -13,15 +10,11 @@ import { Presences } from "../../lib";
 })
 export class ReadyListener extends Listener {
     public prisma: PrismaClient = new PrismaClient();
-    public async run(client: Client) {
-        const updatePresence = function (): void {
-            client.user?.setPresence({
-                status: "online",
-                activities: [Presences[Math.floor(Math.random() * Presences.length)]],
-            });
-        };
-
-        setTimeout(updatePresence, Time.Minute * 2);
+    public async run(): Promise<void> {
+        this.container.client.user?.setPresence({
+            status: "online",
+            activities: [{ name: "Pom-pom cuteness!", type: ActivityType.Watching }],
+        });
 
         try {
             await this.prisma.$connect();
