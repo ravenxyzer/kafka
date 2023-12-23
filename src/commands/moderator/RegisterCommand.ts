@@ -10,6 +10,7 @@ import { PrismaClient } from "@prisma/client";
     description: "Honkai: Star Rail Indonesia staff register.",
     requiredClientPermissions: ["SendMessages"],
     requiredUserPermissions: ["SendMessages"],
+    preconditions: ["ModeratorOnly"],
 })
 export class RegisterCommand extends Command {
     public prisma: PrismaClient = new PrismaClient();
@@ -39,19 +40,9 @@ export class RegisterCommand extends Command {
         member: GuildMember
     ): Promise<Message | InteractionResponse> {
         const guild = this.container.client.guilds.cache.get("1068139995103244289");
-        const staffRole = guild.roles.cache.get("1145597669591502888");
         const db = await this.prisma.staff.findFirst({ where: { userId: member.id } });
 
         if (ctx.guild.id !== "1068139995103244289") return;
-
-        if (!member.roles.cache.has(staffRole.id))
-            return await ctx.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setDescription(`${Emojis.redcross}・Hanya staff yang boleh menjalankan perintah ini!`)
-                        .isErrorEmbed(),
-                ],
-            });
 
         if (db)
             return await ctx.reply({

@@ -11,6 +11,7 @@ import dayjs from "dayjs";
     description: "Display top rank staff.",
     requiredClientPermissions: ["SendMessages"],
     requiredUserPermissions: ["SendMessages"],
+    preconditions: ["ModeratorOnly"],
 })
 export class RankCommand extends Command {
     public prisma: PrismaClient = new PrismaClient();
@@ -39,15 +40,6 @@ export class RankCommand extends Command {
         ctx: Message | Command.ChatInputCommandInteraction,
         member: GuildMember
     ): Promise<Message | InteractionResponse> {
-        if (!member.roles.cache.has("1068139995103244289"))
-            return await ctx.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setDescription(`${Emojis.redcross}・Hanya staff yang boleh menjalankan perintah ini!`)
-                        .isErrorEmbed(),
-                ],
-            });
-
         if (ctx.guild.id !== "1068139995103244289") return;
 
         const members: Data[] = await this.getMembers();

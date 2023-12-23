@@ -8,6 +8,7 @@ import { Message } from "discord.js";
     description: "Say something as the bot.",
     requiredClientPermissions: ["SendMessages"],
     requiredUserPermissions: ["SendMessages"],
+    preconditions: ["ModeratorOnly"],
 })
 export class SayCommand extends Command {
     public async messageRun(message: Message, args: Args): Promise<Message> {
