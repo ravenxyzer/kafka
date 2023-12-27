@@ -1,6 +1,6 @@
 import { Args, Command } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, WebhookClient } from "discord.js";
 
 import { EmbedBuilder } from "../../lib";
 
@@ -37,6 +37,30 @@ export class SendCodeCommand extends Command {
 
         const row: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
-        return await message.channel.send({ content: "<@&1068139995237449772> ada kode baru nih!", embeds: [embed], components: [row] });
+        await message.channel
+            .send({ content: "<@&1068139995237449769> ada kode baru nih!", embeds: [embed], components: [row] })
+            .then(async () => {
+                if (message.channel.id == "1101247686801358888") {
+                    try {
+                        const webhook: WebhookClient = new WebhookClient({
+                            url: "https://discord.com/api/webhooks/1101253458738294886/HjA1x4XWSHbaGNYqA8Aj-v39euOgv2GFehyGYhyb_eP1hNslWx0FrQk32pGUGpwkNieB",
+                        });
+
+                        await webhook.send({
+                            content: "Kode dibawah ini buat user mobile ya. **__Kamu tinggal copas dan klik link diatas buat redeem.__**",
+                        });
+
+                        for (const code of codesToArray) {
+                            await webhook.send(code);
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+
+                return;
+            });
+
+        return;
     }
 }
