@@ -1,9 +1,9 @@
 import { Command, RegisterBehavior } from "@sapphire/framework";
 import { ApplyOptions } from "@sapphire/decorators";
 import { PrismaClient } from "@prisma/client";
-import { Message, InteractionResponse, SlashCommandBuilder, GuildMember, Guild } from "discord.js";
+import { Message, InteractionResponse, SlashCommandBuilder, GuildMember } from "discord.js";
 
-import { EmbedBuilder, Emojis } from "../../lib";
+import { EmbedBuilder } from "../../lib";
 import dayjs from "dayjs";
 
 @ApplyOptions<Command.Options>({
@@ -26,20 +26,14 @@ export class RankCommand extends Command {
     }
 
     public async messageRun(message: Message): Promise<Message> {
-        return (await this.response(message, message.member)) as Message;
+        return (await this.response(message)) as Message;
     }
 
     public async chatInputRun(interaction: Command.ChatInputCommandInteraction): Promise<InteractionResponse> {
-        const guild = this.container.client.guilds.cache.get("1068139995103244289");
-        const member: GuildMember = guild.members.cache.get(interaction.user.id);
-
-        return (await this.response(interaction, member)) as InteractionResponse;
+        return (await this.response(interaction)) as InteractionResponse;
     }
 
-    private async response(
-        ctx: Message | Command.ChatInputCommandInteraction,
-        member: GuildMember
-    ): Promise<Message | InteractionResponse> {
+    private async response(ctx: Message | Command.ChatInputCommandInteraction): Promise<Message | InteractionResponse> {
         if (ctx.guild.id !== "1068139995103244289") return;
 
         const members: Data[] = await this.getMembers();
@@ -72,9 +66,7 @@ export class RankCommand extends Command {
         let container: Data[] = [];
         const guild = this.container.client.guilds.cache.get("1068139995103244289");
         const getMembers = guild.members.cache.filter((m) => m.roles.cache.has("1145597669591502888"));
-        const members: GuildMember[] = getMembers.map((m) => {
-            return m;
-        });
+        const members: GuildMember[] = getMembers.map((m) => m);
 
         for (const member of members) {
             const dbStaff = await this.prisma.staff.findFirst({ where: { userId: member.id } });
@@ -109,5 +101,3 @@ interface Data {
     attendSum: number;
     attendPerMonth: number;
 }
-
-type Headers = ["Name", "Activity Points", "Attendance", "Attendance (per month)"];

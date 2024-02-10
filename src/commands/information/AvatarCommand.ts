@@ -26,12 +26,12 @@ export class AvatarCommand extends Command {
     }
 
     public async messageRun(message: Message, args: Args): Promise<Message> {
-        const user: User = await args.pick("user");
+        const user: User = (await args.pick("user")) ?? message.author;
         return (await this.response(message, user)) as Message;
     }
 
     public async chatInputRun(interaction: Command.ChatInputCommandInteraction): Promise<InteractionResponse> {
-        const user: User = interaction.options.getUser("user");
+        const user: User = interaction.options.getUser("user") ?? interaction.user;
         return (await this.response(interaction, user)) as InteractionResponse;
     }
 
